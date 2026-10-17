@@ -1,0 +1,12 @@
+[package]
+name = "finanzas-infrastructure"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+finanzas-application = { path = "../application" }
+finanzas-domain = { path = "../domain" }
+rusqlite = { version = "0.40.2", features = ["backup", "bundled-sqlcipher-vendored-openssl"] }

@@ -1,0 +1,422 @@
+import { HorizontalBox, VerticalBox } from "std-widgets.slint";
+
+component ActionButton inherits Rectangle {
+    in property <string> label;
+    in property <bool> primary;
+    in property <color> surface-color;
+    in property <color> text-color;
+    in property <color> outline-color;
+    in property <color> accent;
+    callback clicked();
+    height: 40px;
+    min-width: 144px;
+    border-radius: 9px;
+    background: primary ? accent : surface-color;
+    border-width: primary ? 0px : 1px;
+    border-color: outline-color;
+    Text {
+        text: label;
+        color: primary ? #ffffff : text-color;
+        font-size: 14px;
+        font-weight: 600;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+    TouchArea { clicked => { root.clicked(); } }
+}
+
+component MetricCard inherits Rectangle {
+    in property <string> title;
+    in property <string> value;
+    in property <color> accent;
+    in property <color> surface;
+    in property <color> text-color;
+    min-width: 190px; min-height: 116px; border-radius: 14px; background: surface;
+    border-width: 1px; border-color: accent.with-alpha(0.35);
+    VerticalLayout {
+        padding: 16px; spacing: 8px;
+        Text { text: title; color: text-color.with-alpha(0.68); font-size: 14px; }
+        Text { text: value; color: text-color; font-size: 25px; font-weight: 650; }
+        Rectangle { height: 3px; background: accent; border-radius: 2px; }
+    }
+}
+
+component LocalInput inherits Rectangle {
+    in-out property <string> value;
+    in property <string> placeholder;
+    in property <bool> password: false;
+    in property <color> field-color;
+    in property <color> text-color;
+    in property <color> outline;
+    height: 42px;
+    min-width: 160px;
+    border-radius: 8px;
+    background: field-color;
+    border-width: 1px;
+    border-color: outline;
+    Text {
+        x: 12px; y: 0px;
+        width: parent.width - 24px; height: parent.height;
+        text: root.value.is-empty ? root.placeholder : "";
+        color: root.text-color.with-alpha(0.56);
+        vertical-alignment: center;
+        font-size: 14px;
+    }
+    TextInput {
+        x: 12px; y: 6px;
+        width: parent.width - 24px; height: parent.height - 12px;
+        text <=> root.value;
+        color: root.text-color;
+        input-type: root.password ? InputType.password : InputType.text;
+    }
+}
+
+export component AppWindow inherits Window {
+    title: "Saldo Nube · local";
+    preferred-width: 1080px; preferred-height: 900px; min-height: 680px;
+    in-out property <bool> dark-mode: true;
+    in-out property <bool> form-open: false;
+    in-out property <bool> unlock-open: true;
+    in-out property <bool> is-unlocked: false;
+    in-out property <string> unlock-input: "";
+    in-out property <string> unlock-confirmation: "";
+    in-out property <string> unlock-status: "";
+    in-out property <string> category-input: "";
+    in-out property <string> account-input: "general";
+    in-out property <string> description-input: "";
+    in-out property <string> amount-input: "";
+    in-out property <string> date-input: "2026-10-17";
+    in-out property <string> form-status: "";
+    in-out property <string> income-value: "0,00 €";
+    in-out property <string> expense-value: "0,00 €";
+    in-out property <string> balance-value: "0,00 €";
+    in-out property <string> recent-text: "Aún no hay movimientos. Añade el primero cuando estés listo.";
+    in-out property <string> movement-list-text: "Todavía no hay movimientos guardados.";
+    in-out property <bool> delete-confirmation-open: false;
+    in-out property <string> delete-status: "";
+    in-out property <string> selected-movement-number: "1";
+    in-out property <string> pending-delete-number: "";
+    in-out property <string> editing-movement-id: "";
+    in-out property <bool> backup-open: false;
+    in-out property <string> backup-password-input: "";
+    in-out property <string> backup-status: "";
+    in-out property <bool> subscription-form-open: false;
+    in-out property <string> subscription-name-input: "";
+    in-out property <string> subscription-amount-input: "";
+    in-out property <string> subscription-date-input: "2026-11-01";
+    in-out property <string> subscription-status: "";
+    in-out property <string> subscription-list-text: "No hay suscripciones guardadas.";
+    in-out property <bool> planning-open: false;
+    in-out property <string> budget-category-input: "";
+    in-out property <string> budget-limit-input: "";
+    in-out property <string> budget-year-input: "2026";
+    in-out property <string> budget-month-input: "10";
+    in-out property <string> goal-name-input: "";
+    in-out property <string> goal-target-input: "";
+    in-out property <string> goal-saved-input: "0";
+    in-out property <string> planning-status: "";
+    in-out property <string> budget-list-text: "No hay presupuestos definidos.";
+    in-out property <string> goal-list-text: "No hay objetivos de ahorro definidos.";
+    in-out property <string> category-analysis-text: "Aún no hay gastos por categoría.";
+    in-out property <bool> portfolio-open: false;
+    in-out property <string> holding-account-input: "general";
+    in-out property <string> holding-name-input: "";
+    in-out property <string> holding-symbol-input: "";
+    in-out property <string> holding-invested-input: "0";
+    in-out property <string> holding-value-input: "0";
+    in-out property <string> holding-date-input: "2026-10-17";
+    in-out property <string> holding-status: "";
+    in-out property <string> holding-list-text: "No hay posiciones anotadas.";
+    in-out property <string> bank-institution-input: "";
+    in-out property <string> bank-product-input: "";
+    in-out property <string> bank-fee-input: "0";
+    in-out property <string> bank-notes-input: "";
+    in-out property <string> bank-source-input: "";
+    in-out property <string> bank-date-input: "2026-10-17";
+    in-out property <string> bank-list-text: "No hay comparativas anotadas.";
+    callback toggle-theme();
+    callback unlock(string, string);
+    callback save-movement(int, string, string, string, string, string);
+    callback delete-movement(string);
+    callback edit-movement(string);
+    callback create-backup(string);
+    callback save-subscription(int, string, string, string);
+    callback save-budget(string, string, string, string);
+    callback save-goal(string, string, string);
+    callback save-holding(string, string, string, string, string, string);
+    callback save-bank-offer(string, string, string, string, string, string);
+    property <color> page: dark-mode ? #101418 : #f5f7fa;
+    property <color> sidebar: dark-mode ? #151b20 : #ffffff;
+    property <color> surface: dark-mode ? #1c252c : #ffffff;
+    property <color> field: dark-mode ? #111920 : #eef3f7;
+    property <color> text-color: dark-mode ? #f2f5f7 : #17212b;
+    property <color> muted: dark-mode ? #a9b6bf : #5d6a75;
+    property <color> border: dark-mode ? #2a3741 : #dce3e9;
+    property <color> income: #35c58a; property <color> expense: #ef6b73; property <color> available: #58a6ff;
+    background: page;
+    HorizontalLayout {
+        spacing: 0;
+        Rectangle {
+            width: 210px; background: sidebar; border-width: 1px; border-color: border;
+            VerticalLayout {
+                padding: 20px; spacing: 10px;
+                Image { source: @image-url("../../../assets/saldo-nube-mark.png"); width: 42px; height: 42px; }
+                Text { text: "SALDO"; color: available; font-size: 13px; font-weight: 700; }
+                Text { text: "Nube"; color: text-color; font-size: 22px; font-weight: 650; }
+                Rectangle { height: 20px; }
+                Text { text: "Resumen"; color: text-color; font-size: 16px; font-weight: 600; }
+                Text { text: "Movimientos"; color: muted; font-size: 16px; }
+                Text { text: "Suscripciones"; color: muted; font-size: 16px; }
+                Text { text: "Presupuestos"; color: muted; font-size: 16px; }
+                Text { text: "Cuentas"; color: muted; font-size: 16px; }
+                Text { text: "Cartera"; color: muted; font-size: 16px; }
+                Rectangle { vertical-stretch: 1; }
+                Text { text: is-unlocked ? "Cifrado · local · sin red" : "Bloqueado · local · sin red"; color: muted; font-size: 12px; wrap: word-wrap; }
+            }
+        }
+        VerticalLayout {
+            padding: 28px; spacing: 20px;
+            HorizontalLayout {
+                spacing: 12px;
+                Text { text: "Resumen"; color: text-color; font-size: 30px; font-weight: 650; horizontal-stretch: 1; }
+                ActionButton {
+                    label: dark-mode ? "☀  Modo claro" : "◐  Modo oscuro";
+                    primary: false; surface-color: surface; text-color: text-color; outline-color: border; accent: available;
+                    clicked => { root.toggle-theme(); }
+                }
+                ActionButton {
+                    label: "Cartera y cuentas";
+                    primary: false; surface-color: surface; text-color: text-color; outline-color: border; accent: available;
+                    clicked => { if is-unlocked { root.portfolio-open = true; root.holding-status = ""; } else { root.unlock-open = true; root.unlock-status = "Desbloquea primero tu espacio local"; } }
+                }
+                ActionButton {
+                    label: "+ Movimiento";
+                    primary: true; surface-color: surface; text-color: text-color; outline-color: border; accent: available;
+                    clicked => {
+                        if is-unlocked {
+                            root.form-open = true;
+                            root.form-status = "";
+                        } else {
+                            root.unlock-open = true;
+                            root.unlock-status = "Desbloquea primero tu espacio local";
+                        }
+                    }
+                }
+            }
+            if unlock-open : Rectangle {
+                border-radius: 14px; background: surface; border-width: 1px; border-color: available.with-alpha(0.6);
+                VerticalLayout {
+                    padding: 18px; spacing: 10px;
+                    Text { text: is-unlocked ? "Base de datos desbloqueada" : "Desbloquea tu espacio local"; color: text-color; font-size: 18px; font-weight: 600; }
+                    Text {
+                        text: is-unlocked ? "Tus datos están disponibles solo en este dispositivo." : "Elige una contraseña para crear la base o introduce la que ya usas. No se guarda ni se envía.";
+                        color: muted; font-size: 14px; wrap: word-wrap;
+                    }
+                    if !is-unlocked : LocalInput { value <=> root.unlock-input; placeholder: "Contraseña de la base local"; password: true; field-color: field; text-color: text-color; outline: border; }
+                    if !is-unlocked : LocalInput { value <=> root.unlock-confirmation; placeholder: "Repite la contraseña al crearla"; password: true; field-color: field; text-color: text-color; outline: border; }
+                    Text { text: unlock-status; color: expense; font-size: 13px; visible: !unlock-status.is-empty; }
+                    HorizontalBox {
+                        spacing: 12px;
+                        if !is-unlocked : ActionButton { label: "Desbloquear"; primary: true; surface-color: surface; text-color: text-color; outline-color: border; accent: available; clicked => { root.unlock(unlock-input, unlock-confirmation); } }
+                        ActionButton { label: is-unlocked ? "Continuar" : "Ahora no"; primary: false; surface-color: surface; text-color: text-color; outline-color: border; accent: available; clicked => { root.unlock-open = false; } }
+                    }
+                }
+            }
+            if form-open : Rectangle {
+                border-radius: 14px; background: surface; border-width: 1px; border-color: border;
+                VerticalLayout {
+                    padding: 18px; spacing: 10px;
+                    Text { text: editing-movement-id.is-empty ? "Nuevo movimiento" : "Editar movimiento seleccionado"; color: text-color; font-size: 18px; font-weight: 600; }
+                    HorizontalBox {
+                        spacing: 16px;
+                        LocalInput { value <=> root.account-input; placeholder: "Cuenta manual"; field-color: field; text-color: text-color; outline: border; }
+                        LocalInput { value <=> root.category-input; placeholder: "Categoría (ej. alimentación)"; field-color: field; text-color: text-color; outline: border; }
+                        LocalInput { value <=> root.description-input; placeholder: "Descripción"; field-color: field; text-color: text-color; outline: border; horizontal-stretch: 1; }
+                    }
+                    HorizontalBox {
+                        spacing: 10px;
+                        LocalInput { value <=> root.amount-input; placeholder: "Importe, ej. 12,50"; field-color: field; text-color: text-color; outline: border; }
+                        LocalInput { value <=> root.date-input; placeholder: "AAAA-MM-DD"; field-color: field; text-color: text-color; outline: border; }
+                    }
+                    Text { text: form-status; color: expense; font-size: 13px; visible: !form-status.is-empty; }
+                    HorizontalBox {
+                        spacing: 16px;
+                        ActionButton { label: "Guardar gasto"; primary: true; surface-color: surface; text-color: text-color; outline-color: border; accent: expense; clicked => { root.save-movement(0, account-input, category-input, description-input, amount-input, date-input); } }
+                        ActionButton { label: "Guardar ingreso"; primary: true; surface-color: surface; text-color: text-color; outline-color: border; accent: income; clicked => { root.save-movement(1, account-input, category-input, description-input, amount-input, date-input); } }
+                        ActionButton { label: "Cancelar"; primary: false; surface-color: surface; text-color: text-color; outline-color: border; accent: available; clicked => { root.form-open = false; } }
+                    }
+                }
+            }
+            if backup-open : Rectangle {
+                border-radius: 14px; background: surface; border-width: 1px; border-color: available.with-alpha(0.6);
+                VerticalLayout {
+                    padding: 18px; spacing: 10px;
+                    Text { text: "Crear copia cifrada"; color: text-color; font-size: 18px; font-weight: 600; }
+                    Text { text: "Se crea un archivo nuevo local. No se sobrescribe ninguna copia existente."; color: muted; font-size: 14px; wrap: word-wrap; }
+                    LocalInput { value <=> root.backup-password-input; placeholder: "Contraseña de la base"; password: true; field-color: field; text-color: text-color; outline: border; }
+                    Text { text: backup-status; color: muted; font-size: 13px; visible: !backup-status.is-empty; wrap: word-wrap; }
+                    HorizontalBox {
+                        spacing: 12px;
+                        ActionButton { label: "Crear copia"; primary: true; surface-color: surface; text-color: text-color; outline-color: border; accent: available; clicked => { root.create-backup(backup-password-input); } }
+                        ActionButton { label: "Cerrar"; primary: false; surface-color: surface; text-color: text-color; outline-color: border; accent: available; clicked => { root.backup-open = false; root.backup-password-input = ""; } }
+                    }
+                }
+            }
+            if subscription-form-open : Rectangle {
+                border-radius: 14px; background: surface; border-width: 1px; border-color: border;
+                VerticalLayout {
+                    padding: 18px; spacing: 10px;
+                    Text { text: "Nueva suscripción"; color: text-color; font-size: 18px; font-weight: 600; }
+                    HorizontalBox {
+                        spacing: 10px;
+                        LocalInput { value <=> root.subscription-name-input; placeholder: "Nombre (ej. música)"; field-color: field; text-color: text-color; outline: border; horizontal-stretch: 1; }
+                        LocalInput { value <=> root.subscription-amount-input; placeholder: "Importe, ej. 9,99"; field-color: field; text-color: text-color; outline: border; }
+                        LocalInput { value <=> root.subscription-date-input; placeholder: "Próximo cobro AAAA-MM-DD"; field-color: field; text-color: text-color; outline: border; }
+                    }
+                    Text { text: subscription-status; color: expense; font-size: 13px; visible: !subscription-status.is-empty; }
+                    HorizontalBox {
+                        spacing: 12px;
+                        ActionButton { label: "Mensual"; primary: true; surface-color: surface; text-color: text-color; outline-color: border; accent: available; clicked => { root.save-subscription(0, subscription-name-input, subscription-amount-input, subscription-date-input); } }
+                        ActionButton { label: "Anual"; primary: false; surface-color: surface; text-color: text-color; outline-color: border; accent: available; clicked => { root.save-subscription(1, subscription-name-input, subscription-amount-input, subscription-date-input); } }
+                        ActionButton { label: "Cancelar"; primary: false; surface-color: surface; text-color: text-color; outline-color: border; accent: available; clicked => { root.subscription-form-open = false; } }
+                    }
+                }
+            }
+            if planning-open : Rectangle {
+                border-radius: 14px; background: surface; border-width: 1px; border-color: border;
+                VerticalLayout {
+                    padding: 18px; spacing: 10px;
+                    Text { text: "Presupuestos y ahorro"; color: text-color; font-size: 18px; font-weight: 600; }
+                    Text { text: "El presupuesto se aplica al año y mes que indiques."; color: muted; font-size: 13px; wrap: word-wrap; }
+                    Text { text: "Nuevo presupuesto"; color: text-color; font-size: 15px; font-weight: 600; }
+                    HorizontalBox {
+                        spacing: 16px;
+                        LocalInput { value <=> root.budget-category-input; placeholder: "Categoría (ej. hogar)"; field-color: field; text-color: text-color; outline: border; horizontal-stretch: 1; }
+                        LocalInput { value <=> root.budget-limit-input; placeholder: "Límite, ej. 250,00"; field-color: field; text-color: text-color; outline: border; }
+                    }
+                    HorizontalBox {
+                        spacing: 16px;
+                        LocalInput { value <=> root.budget-year-input; placeholder: "Año"; field-color: field; text-color: text-color; outline: border; }
+                        LocalInput { value <=> root.budget-month-input; placeholder: "Mes"; field-color: field; text-color: text-color; outline: border; }
+                        Rectangle { horizontal-stretch: 1; }
+                    }
+                    HorizontalBox {
+                        spacing: 16px;
+                        ActionButton { label: "Guardar presupuesto"; primary: true; surface-color: surface; text-color: text-color; outline-color: border; accent: available; clicked => { root.save-budget(budget-category-input, budget-limit-input, budget-year-input, budget-month-input); } }
+                    }
+                    Text { text: "Nuevo objetivo de ahorro"; color: text-color; font-size: 15px; font-weight: 600; }
+                    HorizontalBox {
+                        spacing: 16px;
+                        LocalInput { value <=> root.goal-name-input; placeholder: "Objetivo (ej. colchón)"; field-color: field; text-color: text-color; outline: border; horizontal-stretch: 1; }
+                        LocalInput { value <=> root.goal-target-input; placeholder: "Objetivo total"; field-color: field; text-color: text-color; outline: border; }
+                        LocalInput { value <=> root.goal-saved-input; placeholder: "Ahorrado"; field-color: field; text-color: text-color; outline: border; }
+                    }
+                    HorizontalBox {
+                        spacing: 16px;
+                        ActionButton { label: "Guardar objetivo"; primary: true; surface-color: surface; text-color: text-color; outline-color: border; accent: income; clicked => { root.save-goal(goal-name-input, goal-target-input, goal-saved-input); } }
+                    }
+                    Text { text: planning-status; color: expense; font-size: 13px; visible: !planning-status.is-empty; }
+                    Text { text: "Presupuestos\n" + budget-list-text; color: muted; font-size: 13px; wrap: word-wrap; }
+                    Text { text: "Objetivos\n" + goal-list-text; color: muted; font-size: 13px; wrap: word-wrap; }
+                    ActionButton { label: "Cerrar"; primary: false; surface-color: surface; text-color: text-color; outline-color: border; accent: available; clicked => { root.planning-open = false; } }
+                }
+            }
+            if portfolio-open : Rectangle {
+                border-radius: 14px; background: surface; border-width: 1px; border-color: border;
+                VerticalLayout {
+                    padding: 18px; spacing: 10px;
+                    Text { text: "Cartera y comparación de cuentas"; color: text-color; font-size: 18px; font-weight: 600; }
+                    Text { text: "Datos manuales y locales. No hay cotizaciones, conexiones bancarias ni recomendaciones de compra."; color: muted; font-size: 13px; wrap: word-wrap; }
+                    Text { text: "Nueva posición"; color: text-color; font-size: 15px; font-weight: 600; }
+                    HorizontalBox { spacing: 12px;
+                        LocalInput { value <=> root.holding-account-input; placeholder: "Cuenta manual"; field-color: field; text-color: text-color; outline: border; }
+                        LocalInput { value <=> root.holding-name-input; placeholder: "Activo"; field-color: field; text-color: text-color; outline: border; }
+                        LocalInput { value <=> root.holding-symbol-input; placeholder: "Símbolo"; field-color: field; text-color: text-color; outline: border; }
+                    }
+                    HorizontalBox { spacing: 12px;
+                        LocalInput { value <=> root.holding-invested-input; placeholder: "Invertido"; field-color: field; text-color: text-color; outline: border; }
+                        LocalInput { value <=> root.holding-value-input; placeholder: "Valor manual"; field-color: field; text-color: text-color; outline: border; }
+                        LocalInput { value <=> root.holding-date-input; placeholder: "Fecha AAAA-MM-DD"; field-color: field; text-color: text-color; outline: border; }
+                        ActionButton { label: "Guardar posición"; primary: true; surface-color: surface; text-color: text-color; outline-color: border; accent: available; clicked => { root.save-holding(holding-account-input, holding-name-input, holding-symbol-input, holding-invested-input, holding-value-input, holding-date-input); } }
+                    }
+                    Text { text: holding-status; color: expense; font-size: 13px; visible: !holding-status.is-empty; }
+                    Text { text: "Posiciones\n" + holding-list-text; color: muted; font-size: 13px; wrap: word-wrap; }
+                    Text { text: "Comparación de cuentas"; color: text-color; font-size: 15px; font-weight: 600; }
+                    Text { text: "Anota la URL oficial y la fecha de consulta. La aplicación no ordena ni recomienda entidades."; color: muted; font-size: 13px; wrap: word-wrap; }
+                    HorizontalBox { spacing: 12px;
+                        LocalInput { value <=> root.bank-institution-input; placeholder: "Entidad"; field-color: field; text-color: text-color; outline: border; }
+                        LocalInput { value <=> root.bank-product-input; placeholder: "Producto"; field-color: field; text-color: text-color; outline: border; }
+                        LocalInput { value <=> root.bank-fee-input; placeholder: "Comisión mensual"; field-color: field; text-color: text-color; outline: border; }
+                    }
+                    HorizontalBox { spacing: 12px;
+                        LocalInput { value <=> root.bank-notes-input; placeholder: "Condiciones visibles"; field-color: field; text-color: text-color; outline: border; horizontal-stretch: 1; }
+                        LocalInput { value <=> root.bank-source-input; placeholder: "URL oficial https://"; field-color: field; text-color: text-color; outline: border; horizontal-stretch: 1; }
+                        LocalInput { value <=> root.bank-date-input; placeholder: "Fecha AAAA-MM-DD"; field-color: field; text-color: text-color; outline: border; }
+                        ActionButton { label: "Guardar comparación"; primary: true; surface-color: surface; text-color: text-color; outline-color: border; accent: income; clicked => { root.save-bank-offer(bank-institution-input, bank-product-input, bank-fee-input, bank-notes-input, bank-source-input, bank-date-input); } }
+                    }
+                    Text { text: "Comparativas\n" + bank-list-text; color: muted; font-size: 13px; wrap: word-wrap; }
+                    ActionButton { label: "Cerrar"; primary: false; surface-color: surface; text-color: text-color; outline-color: border; accent: available; clicked => { root.portfolio-open = false; } }
+                }
+            }
+            Text { text: "Octubre 2026 · Introduce tus gastos y tus ingresos manualmente"; color: muted; font-size: 15px; }
+            HorizontalBox {
+                spacing: 16px;
+                MetricCard { title: "Ingresos"; value: income-value; accent: income; surface: surface; text-color: text-color; }
+                MetricCard { title: "Gastos"; value: expense-value; accent: expense; surface: surface; text-color: text-color; }
+                MetricCard { title: "Disponible"; value: balance-value; accent: available; surface: surface; text-color: text-color; horizontal-stretch: 1; }
+            }
+            HorizontalBox {
+                spacing: 16px;
+                Rectangle {
+                    horizontal-stretch: 1; border-radius: 14px; background: surface; border-width: 1px; border-color: border;
+                    VerticalLayout {
+                        padding: 18px; spacing: 14px;
+                        Text { text: "Movimientos guardados"; color: text-color; font-size: 18px; font-weight: 600; }
+                        Text { text: recent-text; color: muted; font-size: 13px; wrap: word-wrap; }
+                        Rectangle { height: 8px; }
+                        Text { text: movement-list-text; color: text-color; font-size: 14px; wrap: word-wrap; }
+                        Text { text: "Gastos por categoría\n" + category-analysis-text; color: muted; font-size: 13px; wrap: word-wrap; }
+                        Text { text: "Introduce el número de la lista del registro que quieras revisar."; color: muted; font-size: 13px; wrap: word-wrap; }
+                        HorizontalBox {
+                            spacing: 16px;
+                            LocalInput { value <=> root.selected-movement-number; placeholder: "N.º (1 = primero)"; field-color: field; text-color: text-color; outline: border; }
+                            Rectangle { horizontal-stretch: 1; }
+                        }
+                        Text { text: delete-status; color: expense; font-size: 13px; visible: !delete-status.is-empty; }
+                        if !delete-confirmation-open : HorizontalBox {
+                            spacing: 16px;
+                            ActionButton { label: "Editar seleccionado"; primary: false; surface-color: surface; text-color: text-color; outline-color: border; accent: available; clicked => { root.edit-movement(root.selected-movement-number); } }
+                            ActionButton {
+                                label: "Eliminar seleccionado"; primary: false; surface-color: surface; text-color: text-color; outline-color: border; accent: expense;
+                                clicked => { root.pending-delete-number = root.selected-movement-number; root.delete-confirmation-open = true; root.delete-status = ""; }
+                            }
+                        }
+                        if delete-confirmation-open : VerticalLayout {
+                            spacing: 14px;
+                            Text { text: "Esta acción elimina el movimiento n.º " + pending-delete-number + ". Comprueba que es el registro correcto."; color: expense; font-size: 13px; wrap: word-wrap; }
+                            HorizontalBox {
+                                spacing: 16px;
+                                ActionButton { label: "Sí, eliminar"; primary: true; surface-color: surface; text-color: text-color; outline-color: border; accent: expense; clicked => { root.delete-movement(root.pending-delete-number); } }
+                                ActionButton { label: "Cancelar"; primary: false; surface-color: surface; text-color: text-color; outline-color: border; accent: available; clicked => { root.delete-confirmation-open = false; } }
+                            }
+                        }
+                        Rectangle { vertical-stretch: 1; }
+                    }
+                }
+                Rectangle {
+                    width: 280px; border-radius: 14px; background: surface; border-width: 1px; border-color: border;
+                    VerticalLayout {
+                        padding: 18px; spacing: 14px;
+                        Text { text: "Próximos pagos"; color: text-color; font-size: 18px; font-weight: 600; }
+                        Text { text: subscription-list-text; color: muted; font-size: 14px; wrap: word-wrap; }
+                        ActionButton { label: "+ Suscripción"; primary: false; surface-color: surface; text-color: text-color; outline-color: border; accent: available; clicked => { if is-unlocked { root.subscription-form-open = true; root.subscription-status = ""; } else { root.unlock-open = true; root.unlock-status = "Desbloquea primero tu espacio local"; } } }
+                        ActionButton { label: "Copia cifrada"; primary: false; surface-color: surface; text-color: text-color; outline-color: border; accent: available; clicked => { if is-unlocked { root.backup-open = true; root.backup-status = ""; } else { root.unlock-open = true; root.unlock-status = "Desbloquea primero tu espacio local"; } } }
+                        ActionButton { label: "Planificar"; primary: false; surface-color: surface; text-color: text-color; outline-color: border; accent: available; clicked => { if is-unlocked { root.planning-open = true; root.planning-status = ""; } else { root.unlock-open = true; root.unlock-status = "Desbloquea primero tu espacio local"; } } }
+                        Rectangle { vertical-stretch: 1; }
+                        Text { text: "Sin datos compartidos"; color: available; font-size: 13px; }
+                    }
+                }
+            }
+        }
+    }
+}
