@@ -43,10 +43,10 @@ Set-ExecutionPolicy -Scope Process Bypass
 
 El script ejecuta pruebas, genera el binario, abre la aplicación y comprueba con `Get-NetTCPConnection` que el PID iniciado no tiene listeners TCP. No instala servicios ni detiene procesos. Después hay que desbloquear una base de prueba, revisar la interfaz y cerrar la ventana manualmente.
 
-## Antes de publicar
+## Verificaciones para próximas versiones
 
 1. Repetir pruebas completas y comprobación de listeners en Ubuntu y Windows.
 2. Generar una copia cifrada de prueba y verificar restauración local.
 3. Incluir licencia completa elegida por el mantenedor y política `SECURITY.md` de divulgación.
 4. Revisar dependencias y confirmar que no incorporan telemetría, conexión bancaria ni red.
-5. Alcanzar el umbral acordado del 90 % antes de crear o enlazar GitHub.
+5. Mantener el umbral de calidad y seguridad alcanzado antes de publicar nuevas versiones o releases.

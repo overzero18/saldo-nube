@@ -60,3 +60,4 @@ Este archivo se actualiza en cada cambio funcional, técnico o de seguridad.
 - Auditoría local final: no hay remoto Git configurado, el binario Linux release fue ejecutado sin listener asociado y el objetivo Windows no está instalado en este entorno, por lo que su validación sigue siendo una tarea de plataforma separada.
 - Añadido `scripts/windows-verify.ps1` para que la validación pendiente de Windows 11 ejecute las mismas pruebas, genere la release y compruebe listeners del PID de la aplicación sin instalar servicios.
 - La identidad pública pasa a ser «Saldo Nube», con icono original de monedas y progreso. La ruta de datos mantiene compatibilidad de lectura con el prototipo local anterior.
+- Publicado el repositorio inicial de código revisado en GitHub, sin datos locales, copias cifradas, credenciales ni binarios.

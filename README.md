@@ -6,9 +6,9 @@ Aplicación con identidad propia: el nombre y el icono de monedas y progreso son
 
 ## Estado
 
-Aplicación funcional: pide desbloqueo local, cifra la base de datos con SQLCipher y permite guardar movimientos, suscripciones, presupuestos, objetivos, cartera y comparativas manuales, además de crear copias cifradas. No solicita permisos especiales, salvo acceso normal al directorio privado de datos del usuario al crear una base.
+Versión inicial pública: pide desbloqueo local, cifra la base de datos con SQLCipher y permite guardar movimientos, suscripciones, presupuestos, objetivos, cartera y comparativas manuales, además de crear copias cifradas. No solicita permisos especiales, salvo acceso normal al directorio privado de datos del usuario al crear una base.
 
-El repositorio permanecerá únicamente local hasta que el proyecto esté, como mínimo, al 90 % y haya pasado una revisión de seguridad y documentación.
+El código se publicó después de superar el umbral local acordado, la revisión de seguridad y dieciocho pruebas en Ubuntu. Sigue pendiente ejecutar la validación de distribución en un Windows 11 real mediante [`scripts/windows-verify.ps1`](scripts/windows-verify.ps1).
 
 ## Principios
 
