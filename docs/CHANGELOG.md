@@ -61,3 +61,4 @@ Este archivo se actualiza en cada cambio funcional, técnico o de seguridad.
 - Añadido `scripts/windows-verify.ps1` para que la validación pendiente de Windows 11 ejecute las mismas pruebas, genere la release y compruebe listeners del PID de la aplicación sin instalar servicios.
 - La identidad pública pasa a ser «Saldo Nube», con icono original de monedas y progreso. La ruta de datos mantiene compatibilidad de lectura con el prototipo local anterior.
 - Publicado el repositorio inicial de código revisado en GitHub, sin datos locales, copias cifradas, credenciales ni binarios.
+- README público rediseñado: incorpora marca visual, explicación de privacidad, tabla de funciones, inicio rápido, estado verificable y límites explícitos del producto.

@@ -1,25 +1,92 @@
-# Saldo Nube
+<p align="center">
+  <img src="assets/saldo-nube-mark.png" width="150" alt="Icono de Saldo Nube: monedas y línea de progreso">
+</p>
 
-Aplicación de escritorio local para registrar gastos, ingresos, suscripciones y objetivos de ahorro en Windows 11 y Ubuntu.
+<h1 align="center">Saldo Nube</h1>
 
-Aplicación con identidad propia: el nombre y el icono de monedas y progreso son originales del proyecto.
+<p align="center">
+  <strong>Tus finanzas, en tu equipo y bajo tu control.</strong><br>
+  Escritorio local · base cifrada · sin conexión bancaria
+</p>
 
-## Estado
+---
 
-Versión inicial pública: pide desbloqueo local, cifra la base de datos con SQLCipher y permite guardar movimientos, suscripciones, presupuestos, objetivos, cartera y comparativas manuales, además de crear copias cifradas. No solicita permisos especiales, salvo acceso normal al directorio privado de datos del usuario al crear una base.
+Llevar tus gastos no debería obligarte a entregar tu información financiera a una nube. **Saldo Nube** es una aplicación de escritorio para anotar, entender y planificar tus finanzas manualmente: los datos se cifran en una base local y la aplicación no abre puertos, no muestra anuncios ni incorpora telemetría.
 
-El código se publicó después de superar el umbral local acordado, la revisión de seguridad y dieciocho pruebas en Ubuntu. Sigue pendiente ejecutar la validación de distribución en un Windows 11 real mediante [`scripts/windows-verify.ps1`](scripts/windows-verify.ps1).
+## Por qué Saldo Nube
 
-## Principios
+- **Tus datos se quedan contigo.** Sin cuentas de usuario, sincronización, nube ni conexión a bancos.
+- **Cifrado local.** La base usa SQLCipher; la contraseña se solicita en el dispositivo y no se guarda.
+- **Información útil, sin ruido.** Registra ingresos, gastos, suscripciones, presupuestos y objetivos de ahorro.
+- **Cartera sin consejos disfrazados.** Anota posiciones y valores manualmente, sin cotizaciones automáticas ni recomendaciones de compra o venta.
+- **Comparativas transparentes.** Guarda comisiones, condiciones, fuente oficial y fecha de consulta de cada cuenta que compares.
 
-- Sin conexión a bancos, nube, telemetría ni red.
-- Sin puertos abiertos ni servicios en segundo plano.
-- Lógica financiera en Rust independiente de la interfaz Slint.
-- Datos introducidos manualmente y almacenados de forma local.
-- No proporciona asesoramiento personalizado de inversión.
+## Qué puedes hacer
 
-Consulta [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/SECURITY.md](docs/SECURITY.md), [SECURITY.md](SECURITY.md), [docs/PERSISTENCE.md](docs/PERSISTENCE.md), [docs/DEPENDENCIES.md](docs/DEPENDENCIES.md), [docs/DESIGN.md](docs/DESIGN.md), [docs/DISTRIBUTION.md](docs/DISTRIBUTION.md) y [docs/CHANGELOG.md](docs/CHANGELOG.md).
+| Área | Incluye |
+| --- | --- |
+| Movimientos | Gastos e ingresos, categorías, fecha, descripción y cuenta manual. |
+| Suscripciones | Cobros mensuales o anuales y próximos pagos. |
+| Planificación | Presupuestos mensuales por categoría y objetivos de ahorro. |
+| Cartera | Posiciones, importe invertido, valor anotado y resultado manual. |
+| Cuentas | Comparativas con comisión, condiciones, URL HTTPS oficial y fecha de revisión. |
+| Protección | Copias SQLCipher explícitas que no sobrescriben archivos anteriores. |
+
+## Lo que deliberadamente no hace
+
+- No pide credenciales bancarias, IBAN ni acceso a tu banco.
+- No envía tus movimientos, contraseñas ni comparativas a ningún servidor.
+- No abre puertos ni instala servicios en segundo plano.
+- No ejecuta operaciones ni ofrece asesoramiento financiero personalizado.
+
+## Empieza en Ubuntu
+
+Necesitas Rust y las dependencias de escritorio que requiere Slint. Desde la raíz del proyecto:
+
+```bash
+cargo run -p finanzas-desktop
+```
+
+La primera vez, crea una contraseña para la base local. Después añade un movimiento manual y utiliza **Copia cifrada** antes de introducir información que quieras conservar.
+
+Para compilar una versión optimizada:
+
+```bash
+cargo build --release -p finanzas-desktop
+```
+
+## Estado y plataformas
+
+La versión inicial pública ha superado **18 pruebas** en Ubuntu, incluidas persistencia SQLCipher, copias cifradas y migraciones de datos existentes. La aplicación se ha ejecutado localmente sin listeners asociados.
+
+- **Ubuntu:** compilada y verificada localmente.
+- **Windows 11:** el código y el script de validación están preparados; falta la ejecución final en un Windows real antes de publicar una release distribuible. Consulta [`scripts/windows-verify.ps1`](scripts/windows-verify.ps1).
+
+## Arquitectura que se puede revisar
+
+La lógica financiera está separada de la interfaz:
+
+```text
+domain  → reglas financieras puras
+application → casos de uso y contratos
+infrastructure → SQLCipher, migraciones y copias locales
+desktop → interfaz Slint
+```
+
+No hay dependencia de la interfaz en las reglas de dinero, fechas o presupuestos. Los importes se trabajan en céntimos para evitar errores de coma flotante.
+
+## Seguridad y documentación
+
+- [Arquitectura](docs/ARCHITECTURE.md)
+- [Persistencia y copias cifradas](docs/PERSISTENCE.md)
+- [Seguridad](docs/SECURITY.md)
+- [Política de divulgación](SECURITY.md)
+- [Dependencias](docs/DEPENDENCIES.md)
+- [Empaquetado](docs/DISTRIBUTION.md)
+- [Registro de cambios](docs/CHANGELOG.md)
+
+Si detectas un problema de seguridad, no publiques contraseñas, bases SQLCipher ni datos reales. Revisa primero la [política de seguridad](SECURITY.md).
 
 ## Licencia
 
-El código se distribuye bajo [GPL-3.0-or-later](LICENSE). La licencia completa ya forma parte del árbol local antes de una futura publicación.
+Saldo Nube se distribuye bajo [GPL-3.0-or-later](LICENSE).
