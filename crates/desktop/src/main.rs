@@ -258,11 +258,11 @@ fn main() -> Result<(), slint::PlatformError> {
             w.set_unlock_status("Las contraseñas no coinciden".into());
             return;
         }
-        if let Some(directory) = path.parent() {
-            if fs::create_dir_all(directory).is_err() {
-                w.set_unlock_status("No se pudo preparar el directorio local".into());
-                return;
-            }
+        if let Some(directory) = path.parent()
+            && fs::create_dir_all(directory).is_err()
+        {
+            w.set_unlock_status("No se pudo preparar el directorio local".into());
+            return;
         }
         match SqlCipherLedger::open(path, &passphrase) {
             Ok(opened) => {
@@ -729,19 +729,6 @@ fn parse_non_negative_amount(input: &str) -> Result<Money, String> {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::parse_movement_position;
-
-    #[test]
-    fn movement_position_is_one_based_and_rejects_invalid_input() {
-        assert_eq!(parse_movement_position("1"), Ok(1));
-        assert_eq!(parse_movement_position(" 12 "), Ok(12));
-        assert!(parse_movement_position("0").is_err());
-        assert!(parse_movement_position("dos").is_err());
-    }
-}
-
 fn parse_date(input: &str) -> Result<LocalDate, String> {
     let p: Vec<_> = input.split('-').collect();
     if p.len() != 3 {
@@ -754,14 +741,52 @@ fn parse_date(input: &str) -> Result<LocalDate, String> {
     )
     .map_err(|_| "Fecha no válida".into())
 }
+
 fn money(value: Money) -> String {
-    let n = value.cents();
-    let sign = if n < 0 { "-" } else { "" };
-    let a = n.unsigned_abs();
-    format!("{sign}{},{} €", a / 100, a % 100)
+    format!("{} €", money_input(value))
 }
 
 fn money_input(value: Money) -> String {
     let cents = value.cents();
-    format!("{},{}", cents / 100, cents.unsigned_abs() % 100)
+    let sign = if cents < 0 { "-" } else { "" };
+    let abs = cents.unsigned_abs();
+    format!("{sign}{},{:02}", abs / 100, abs % 100)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{Money, money, money_input, parse_amount, parse_movement_position};
+
+    #[test]
+    fn movement_position_is_one_based_and_rejects_invalid_input() {
+        assert_eq!(parse_movement_position("1"), Ok(1));
+        assert_eq!(parse_movement_position(" 12 "), Ok(12));
+        assert!(parse_movement_position("0").is_err());
+        assert!(parse_movement_position("dos").is_err());
+    }
+
+    #[test]
+    fn money_pads_cents_to_two_digits() {
+        assert_eq!(money(Money::from_cents(1205)), "12,05 €");
+        assert_eq!(money(Money::from_cents(1200)), "12,00 €");
+        assert_eq!(money(Money::from_cents(5)), "0,05 €");
+        assert_eq!(money(Money::from_cents(-50)), "-0,50 €");
+        assert_eq!(money(Money::from_cents(-1205)), "-12,05 €");
+    }
+
+    #[test]
+    fn money_input_keeps_sign_and_two_decimals() {
+        assert_eq!(money_input(Money::from_cents(1205)), "12,05");
+        assert_eq!(money_input(Money::from_cents(1200)), "12,00");
+        assert_eq!(money_input(Money::from_cents(-50)), "-0,50");
+    }
+
+    #[test]
+    fn editing_an_amount_does_not_change_it() {
+        for cents in 1..=5_000 {
+            let shown = money_input(Money::from_cents(cents));
+            let parsed = parse_amount(&shown).expect("el importe mostrado debe poder leerse");
+            assert_eq!(parsed.cents(), cents, "importe {shown}");
+        }
+    }
 }

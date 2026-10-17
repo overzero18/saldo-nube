@@ -4,6 +4,15 @@ Este archivo se actualiza en cada cambio funcional, técnico o de seguridad.
 
 ## Sin publicar
 
+### Corregido — 2026-10-18
+
+- Los importes con céntimos de 1 a 9 se mostraban sin cero a la izquierda (`12,5 €` en lugar de `12,05 €`) y, al editar un movimiento, el campo se rellenaba con `12,5`, que se leía como 12,50 y cambiaba el importe al guardar. `money` y `money_input` rellenan ahora los céntimos a dos dígitos y `money_input` conserva el signo de los importes negativos.
+- Pruebas nuevas para el formato, el signo y la ida y vuelta de importes de 0,01 a 50,00 €.
+
+### Técnico — 2026-10-18
+
+- Resueltos los dos avisos de `clippy`: condición anidada fusionada y funciones auxiliares movidas antes del módulo de pruebas.
+
 ### Añadido — 2026-10-17
 
 - Documentada la lectura responsable del resumen local por categoría: alcance, comprobaciones previas y límites, sin convertirlo en asesoramiento financiero.
