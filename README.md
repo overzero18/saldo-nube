@@ -28,6 +28,7 @@ Llevar tus gastos no debería obligarte a entregar tu información financiera a 
 | Movimientos | Gastos e ingresos, categorías, fecha, descripción y cuenta manual. |
 | Suscripciones | Cobros mensuales o anuales y próximos pagos. |
 | Planificación | Presupuestos mensuales por categoría y objetivos de ahorro. |
+| Análisis local | Resumen de gastos por categoría calculado desde los movimientos cifrados del dispositivo. |
 | Cartera | Posiciones, importe invertido, valor anotado y resultado manual. |
 | Cuentas | Comparativas con comisión, condiciones, URL HTTPS oficial y fecha de revisión. |
 | Protección | Copias SQLCipher explícitas que no sobrescriben archivos anteriores. |
@@ -83,6 +84,7 @@ No hay dependencia de la interfaz en las reglas de dinero, fechas o presupuestos
 - [Política de divulgación](SECURITY.md)
 - [Dependencias](docs/DEPENDENCIES.md)
 - [Empaquetado](docs/DISTRIBUTION.md)
+- [Cómo interpretar el análisis local](docs/ANALYSIS.md)
 - [Registro de cambios](docs/CHANGELOG.md)
 
 Si detectas un problema de seguridad, no publiques contraseñas, bases SQLCipher ni datos reales. Revisa primero la [política de seguridad](SECURITY.md).

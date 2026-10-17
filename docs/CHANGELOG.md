@@ -6,6 +6,8 @@ Este archivo se actualiza en cada cambio funcional, técnico o de seguridad.
 
 ### Añadido — 2026-10-17
 
+- Documentada la lectura responsable del resumen local por categoría: alcance, comprobaciones previas y límites, sin convertirlo en asesoramiento financiero.
+
 - Estructura documental inicial.
 - Contrato de ejecución local sin red, puertos ni servicios residentes.
 - Arquitectura prevista con lógica Rust separada de la interfaz Slint.
